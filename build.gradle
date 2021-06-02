@@ -1,0 +1,46 @@
+import com.google.common.base.CaseFormat
+
+import java.text.SimpleDateFormat
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.2.1"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+ext {
+    appVersionCode = 1104
+    appVersionName = '1.1.4'
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+
+task backup(type: Zip) {
+    from projectDir
+    def folders = ['.gradle/**', '.idea/**', 'build/**', 'app/release/**', 'app/build/**', 'app/src/androidTest/**', 'app/src/test/**']
+    excludes = folders as Set
+    def date = new Date()
+    def sdf = new SimpleDateFormat("yyy.MM.dd_HH.mm")
+    def time = sdf.format(date)
+    def projectName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, project.name)
+    archiveName projectName + "_" + time + "_v" + appVersionName + ".zip"
+    destinationDir(file('../'))
+}
